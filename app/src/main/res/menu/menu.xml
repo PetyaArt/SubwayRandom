@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <item
+        android:id="@+id/add_and_delete"
+        android:title="Party" />
+
+    <item
+        android:id="@+id/add_players"
+        android:title="Add players " />
+    <item
+        android:id="@+id/delete_players"
+        android:title="Delete player" />
+
+</menu>
