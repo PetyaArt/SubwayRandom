@@ -18,7 +18,7 @@
         android:onClick="random"
         android:text="@string/random"
         android:textColor="@color/white"
-        android:textSize="60dp"
+        android:textSize="60sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
