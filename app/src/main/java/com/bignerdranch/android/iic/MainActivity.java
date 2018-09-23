@@ -4,8 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
-import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,14 +13,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.bignerdranch.android.iic.model.Player;
 import com.bignerdranch.android.iic.model.PlayerLab;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 import java.util.ArrayList;
@@ -32,9 +32,6 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String DIALOG_RANDOM = "DialogRandom";
-    private static final String DEBUG_TAG = "NetworkStatusExample";
-
     private PlayerLab mPlayerLab;
     private List<Player> mPlayers;
     private List<String> mPlayersRandom;
@@ -42,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private View mCustomView;
     private Cursor cursor;
     private int mRandom;
-    private TextView mTextViewRandom;
-    private Button mButtonRandom;
+    private ImageButton mButtonRandom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
     private void deletePlayer() {
         mCustomView = getLayoutInflater().inflate(R.layout.dialog, null);
         new AlertDialog.Builder(this)
+                .setTitle("Delete player")
                 .setView(mCustomView)
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
@@ -150,6 +147,30 @@ public class MainActivity extends AppCompatActivity {
         mButtonRandom = findViewById(view.getId());
         mButtonRandom.setEnabled(false);
 
+        int randomAnimation = (int) (Math.random() * 100);
+
+        if (randomAnimation > 90) {
+            Animation animation = AnimationUtils.loadAnimation(this, R.anim.supratuturu);
+            mButtonRandom.startAnimation(animation);
+
+            MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.supratuturu);
+            mediaPlayer.start();
+        } else if (randomAnimation > 60) {
+            Animation animation = AnimationUtils.loadAnimation(this, R.anim.tuturubis);
+            mButtonRandom.startAnimation(animation);
+
+            MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.tuturubis);
+            mediaPlayer.start();
+        } else if (randomAnimation > 0) {
+            Animation animation = AnimationUtils.loadAnimation(this, R.anim.tuturu);
+            mButtonRandom.startAnimation(animation);
+
+            MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.tuturu);
+            mediaPlayer.start();
+        }
+
+
+
         mPlayersRandom = new ArrayList<>();
         for (Player player: mPlayers) {
             if (player.isCheckBox())
@@ -170,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<JsonPrimitive> call, Throwable t) {
                     Log.d("myLogs", t.toString());
+                    mButtonRandom.setEnabled(true);
                 }
             });
         } else {
@@ -189,8 +211,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void result() {
         mCustomView = getLayoutInflater().inflate(R.layout.dialog_anime, null);
-        mTextViewRandom = mCustomView.findViewById(R.id.textRandom);
-        mTextViewRandom.setText(mPlayersRandom.get(mRandom));
+        TextView textViewRandom = mCustomView.findViewById(R.id.textRandom);
+        textViewRandom.setText(mPlayersRandom.get(mRandom));
         new AlertDialog.Builder(this)
                 .setView(mCustomView)
                 .create()
