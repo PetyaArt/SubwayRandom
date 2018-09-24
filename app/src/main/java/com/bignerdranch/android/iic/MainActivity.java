@@ -144,9 +144,52 @@ public class MainActivity extends AppCompatActivity {
 
     public void random(View view) {
         mPlayers = mPlayerLab.getPlayer();
-        mButtonRandom = findViewById(view.getId());
-        mButtonRandom.setEnabled(false);
+        int size = mPlayers.size();
 
+        if (!mPlayers.isEmpty() && size > 1) {
+            mButtonRandom = findViewById(view.getId());
+            mButtonRandom.setEnabled(false);
+
+            mPlayersRandom = new ArrayList<>();
+            for (Player player: mPlayers) {
+                if (player.isCheckBox())
+                    mPlayersRandom.add(player.getName());
+            }
+            int size2 = mPlayersRandom.size();
+
+            if (!mPlayersRandom.isEmpty() && size2 > 1){
+
+                animation();
+
+                if (isOnline()) {
+                    Link link = Controller.getApi();
+
+                    link.getRandom(1, 0, mPlayersRandom.size() - 1, 1, 10, "plain", "new").enqueue(new Callback<JsonPrimitive>() {
+                        @Override
+                        public void onResponse(Call<JsonPrimitive> call, Response<JsonPrimitive> response) {
+                            JsonPrimitive jo = response.body();
+                            mRandom = jo.getAsInt();
+
+                            result();
+                        }
+                        @Override
+                        public void onFailure(Call<JsonPrimitive> call, Throwable t) {
+                            Log.d("myLogs", t.toString());
+                        }
+                    });
+                } else {
+                    mRandom = (int) (Math.random() * mPlayersRandom.size());
+                    if (!mPlayersRandom.isEmpty()){
+                        result();
+                    }
+                }
+            } else {
+                mButtonRandom.setEnabled(true);
+            }
+        }
+    }
+
+    private void animation() {
         int randomAnimation = (int) (Math.random() * 100);
 
         if (randomAnimation > 90) {
@@ -168,41 +211,6 @@ public class MainActivity extends AppCompatActivity {
             MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.tuturu);
             mediaPlayer.start();
         }
-
-
-
-        mPlayersRandom = new ArrayList<>();
-        for (Player player: mPlayers) {
-            if (player.isCheckBox())
-                mPlayersRandom.add(player.getName());
-        }
-
-        if (isOnline()) {
-            Link link = Controller.getApi();
-
-            link.getRandom(1, 0, mPlayersRandom.size() - 1, 1, 10, "plain", "new").enqueue(new Callback<JsonPrimitive>() {
-                @Override
-                public void onResponse(Call<JsonPrimitive> call, Response<JsonPrimitive> response) {
-                    JsonPrimitive jo = response.body();
-                    mRandom = jo.getAsInt();
-
-                    result();
-                }
-                @Override
-                public void onFailure(Call<JsonPrimitive> call, Throwable t) {
-                    Log.d("myLogs", t.toString());
-                    mButtonRandom.setEnabled(true);
-                }
-            });
-        } else {
-            mRandom = (int) (Math.random() * mPlayersRandom.size());
-            if (!mPlayersRandom.isEmpty()){
-                result();
-            } else {
-                mButtonRandom.setEnabled(true);
-            }
-        }
-
     }
 
     public void updateList() {
